@@ -1,0 +1,10 @@
+[theme]
+
+# メイン画面の背景色
+backgroundColor = "#93FFAB"
+
+# サイドバーなどの背景色
+secondaryBackgroundColor = "#ffffff"
+
+# 文字の色
+textColor = "#222222"
