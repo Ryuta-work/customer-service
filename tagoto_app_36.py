@@ -1449,22 +1449,27 @@ elif page == '予約確認・検索':
 
                     # --- ▼▼▼ 以下のブロックを修正・置き換え ▼▼▼ ---
                     order_string = row.get('注文内容')
-                    if order_string:
-                        # "煮込み, 煮込み, ご飯セット" のような文字列を
-                        # ["煮込み", "煮込み", "ご飯セット"] のリストにする
-                        order_list = [item.strip() for item in order_string.split(',') if item.strip()]
+
+                    # [修正点]
+                    # order_string が存在し (True)、かつ pd.isna で NaN でないことを確認
+                    if order_string and not pd.isna(order_string):
                         
-                        # Counterを使って {"煮込み": 2, "ご飯セット": 1} のように集計
-                        # (前回の修正で import 済みですが、念のためここでもインポートします)
-                        from collections import Counter
-                        order_counts = Counter(order_list)
+                        # [修正点]
+                        # 実行前に str() で明示的に文字列にキャスト(変換)する
+                        order_list = [item.strip() for item in str(order_string).split(',') if item.strip()]
                         
-                        # "煮込み (2), ご飯セット (1)" のような表示用文字列を作成
-                        # sorted() を使ってアイテム名順に並べると見やすくなります
-                        display_order_string = ", ".join([f"{item} ({count})" for item, count in sorted(order_counts.items())])
-                        
-                        st.write(f"**注文内容:** {display_order_string}")
-                    # --- ▲▲▲ 修正ここまで ▲▲▲ ---      
+                        # リストが空でなければ (例: " , " だけで中身がなかった場合)
+                        if order_list:
+                            from collections import Counter
+                            order_counts = Counter(order_list)
+                            
+                            display_order_string = ", ".join([f"{item} ({count})" for item, count in sorted(order_counts.items())])
+                            
+                            st.write(f"**注文内容:** {display_order_string}")
+                        # else: 
+                            # order_listが空 (例: ", ,") だった場合は何も表示しない
+                    
+                    # --- ▲▲▲ 置き換えここまで ▲▲▲ ---                
 
 
 
